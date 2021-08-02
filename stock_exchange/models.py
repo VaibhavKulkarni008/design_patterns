@@ -29,8 +29,8 @@ class Order:
     price: float = field(repr=False)
     pending_quantity: int = field(init=False, repr=False)
     id: str = field(default=str(uuid4()), repr=False)
-    created_on: datetime = field(default=datetime.now(), repr=False)
-    updated_on: datetime = field(default=datetime.now(), repr=False)
+    created_on: datetime = field(default_factory=datetime.now, repr=False)
+    updated_on: datetime = field(default_factory=datetime.now, repr=False)
     completed_on: Any = field(default=None, repr=False)
     status: str = field(default="PENDING", repr=False)
 
@@ -89,6 +89,7 @@ class OrderLedger:
     stock: str
     quantity: str
     price: float
+    created_on: datetime = field(default_factory=datetime.now)
 
 
 def refresh_order_pool():
