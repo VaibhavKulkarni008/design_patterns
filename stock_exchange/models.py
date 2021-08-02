@@ -78,6 +78,9 @@ class Order:
         if self.pending_quantity == 0:
             self.completed_on = datetime.now()
             self.status = "COMPLETED"
+
+            order_pool = seller_order_pool if self.order_type == "SELL" else buyer_order_pool
+            order_pool.pop(self.id)
         else:
             self.status = "PROCESSING"
 
@@ -101,10 +104,6 @@ def refresh_order_pool():
                 Order.process_orders(seller_order=seller_order,
                                      buyer_order=buyer_order,
                                      buyable_quantity=buyable_quantity)
-                if buyer_order.pending_quantity == 0:
-                    buyer_order_pool.pop(buyer_order.id)
-        if seller_order.pending_quantity == 0:
-            seller_order_pool.pop(seller_order.id)
 
 
 @dataclass
