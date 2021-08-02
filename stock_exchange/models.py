@@ -24,15 +24,15 @@ class User:
 class Order:
     user: User
     order_type: str
-    stock_name: str
-    quantity: int
-    price: float
-    pending_quantity: int = field(init=False)
-    id: str = str(uuid4())
-    created_on: datetime = datetime.now()
-    updated_on: datetime = datetime.now()
-    completed_on: Any = None
-    status: str = "PENDING"
+    stock_name: str = field(repr=False)
+    quantity: int = field(repr=False)
+    price: float = field(repr=False)
+    pending_quantity: int = field(init=False, repr=False)
+    id: str = field(default=str(uuid4()), repr=False)
+    created_on: datetime = field(default=datetime.now(), repr=False)
+    updated_on: datetime = field(default=datetime.now(), repr=False)
+    completed_on: Any = field(default=None, repr=False)
+    status: str = field(default="PENDING", repr=False)
 
     def __post_init__(self):
         self.pending_quantity = self.quantity
@@ -59,8 +59,8 @@ class Order:
         amount = buyable_quantity * seller_order.price
         seller_order.user.account.deposit(amount)
         buyer_order.user.account.withdraw(amount)
-        ledger = OrderLedger(buyer=buyer_order.user,
-                             seller=seller_order.user,
+        ledger = OrderLedger(buyer_order=buyer_order,
+                             seller_order=seller_order,
                              price=seller_order.price,
                              quantity=buyable_quantity,
                              stock=seller_order.stock_name)
@@ -84,8 +84,8 @@ class Order:
 
 @dataclass
 class OrderLedger:
-    buyer: User
-    seller: User
+    buyer_order: Order
+    seller_order: Order
     stock: str
     quantity: str
     price: float
